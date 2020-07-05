@@ -22,8 +22,8 @@ def index():
         'message': 'Hello world!'
     })
 
-@app.route('/persons/')
-@app.route('/persons/all/')
+@app.route('/persons/info/')
+@app.route('/persons/info/all/')
 def get_persons():
     try:
         cursor = conn.cursor()
@@ -44,7 +44,50 @@ def get_persons():
             cursor.close()
         return e
 
-@app.route('/persons/get-skills/<id>/')
+@app.route('/persons/info/<id>/')
+def get_person(id=id):
+    if id_regex.match(id):
+        try:
+            cursor = conn.cursor()
+            query = ('SELECT * FROM persons WHERE id = %(id)s')
+            cursor.execute(query, {'id': id})
+            result = cursor.fetchone()
+            cursor.close()
+            if result:
+                el = PersonHandler.parse_info(result)
+                return jsonify(el)
+            else:
+                return jsonify({'message': 'There are no results.'})
+        except mysql.connector.Error as e:
+            if cursor:
+                cursor.close()
+            return e
+    else:
+        return jsonify({'message': 'Value is incorrect!'})
+
+@app.route('/persons/skills/')
+@app.route('/persons/skills/all/')
+def get_all_person_skills():
+    try:
+        cursor = conn.cursor()
+        query = ('SELECT * FROM person_skills JOIN persons ON persons.id = person_skills.person_id JOIN skills ON skills.id = person_skills.skill_id JOIN categories ON categories.id = skills.category_id')
+        cursor.execute(query)
+        results = cursor.fetchall()
+        cursor.close()
+        if results and len(results) > 0:
+            res_json = []
+            for r in results:
+                el = PersonHandler.parse_skill(r)
+                res_json.append(el)
+            return jsonify(res_json)
+        else:
+            return jsonify({'message': 'There are no results.'})
+    except mysql.connector.Error as e:
+        if cursor:
+            cursor.close()
+        return e
+
+@app.route('/persons/skills/<id>/')
 def get_person_skills(id=id):
     if id_regex.match(id):
         try:
@@ -58,7 +101,6 @@ def get_person_skills(id=id):
                 for r in results:
                     el = PersonHandler.parse_skill(r)
                     res_json.append(el)
- 
                 return jsonify(res_json)
             else:
                 return jsonify({'message': 'There are no results.'})
@@ -69,7 +111,7 @@ def get_person_skills(id=id):
     else:
         return jsonify({'message': 'Value is incorrect!'})
 
-@app.route('/persons/get-rating/<id>/')
+@app.route('/persons/rating/<id>/')
 def get_rating_from_person(id=id):
     if id_regex.match(id):
         try:
@@ -104,7 +146,6 @@ def get_jobs():
             for r in results:
                 d = JobHandler.parse_job_info(r)
                 res_json.append(d)
-
             return jsonify(res_json)
         else:
 
