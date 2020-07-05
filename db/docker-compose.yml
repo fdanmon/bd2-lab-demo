@@ -1,0 +1,36 @@
+version: '3.5'
+
+services:
+  db:
+    image: mysql:5.7.22
+    container_name: bd2_labs_container
+    command: --default-authentication-plugin=mysql_native_password
+    tty: true
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: bd2_labs_pass
+      MYSQL_DATABASE: bd2_labs
+    ports:
+      - 3306:3306
+    volumes:
+      - ./backup/mysql_files:/var/lib/mysql
+      - ./backup/dump.sql:/docker-entrypoint-initdb.d/dump.sql
+    networks:
+      - bd2_labs_network
+
+  adminer:
+    image: adminer
+    ports:
+      - 8080:8080
+    depends_on:
+      - db
+    networks:
+      - bd2_labs_network
+
+networks:
+  bd2_labs_network:
+    driver: bridge
+
+volumes:
+  backup:
+    driver: local
