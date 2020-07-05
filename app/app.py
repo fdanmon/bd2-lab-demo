@@ -2,6 +2,8 @@ from flask import Flask
 from flask import jsonify
 import mysql.connector
 import re
+from controllers.personhandler import PersonHandler
+from controllers.jobhandler import JobHandler
 
 id_regex = re.compile("^[1-9]+[0-9]*$")
 
@@ -20,8 +22,8 @@ def index():
         'message': 'Hello world!'
     })
 
-@app.route('/persons')
-@app.route('/persons/all')
+@app.route('/persons/')
+@app.route('/persons/all/')
 def get_persons():
     try:
         cursor = conn.cursor()
@@ -32,15 +34,7 @@ def get_persons():
         if results and len(results) > 0:
             res_json = []
             for r in results:
-                el = {
-                    'id': r[0],
-                    'name': r[1],
-                    'document_number': r[2],
-                    'sex': r[3],
-                    'birth_date': r[4],
-                    'phone': r[5],
-                    'rating': r[6]
-                }
+                el = PersonHandler.parse_info(r)
                 res_json.append(el)
             return jsonify(res_json)
         else:
@@ -50,7 +44,7 @@ def get_persons():
             cursor.close()
         return e
 
-@app.route('/persons/get-skills/<id>')
+@app.route('/persons/get-skills/<id>/')
 def get_person_skills(id=id):
     if id_regex.match(id):
         try:
@@ -62,26 +56,7 @@ def get_person_skills(id=id):
             if results and len(results) > 0:
                 res_json = []
                 for r in results:
-                    el = {
-                        'id': r[0],
-                        'rating': r[3],
-                        'person': {
-                            'id': r[4],
-                            'name': r[5],
-                            'document_number': r[6],
-                            'sex': r[7],
-                            'birth_date': r[8],
-                            'phone': r[9]
-                        },
-                        'skill': {
-                            'id': r[11],
-                            'title': r[13],
-                            'category': {
-                                'id': r[14],
-                                'name': r[15]
-                            }
-                        }
-                    }
+                    el = PersonHandler.parse_skill(r)
                     res_json.append(el)
  
                 return jsonify(res_json)
@@ -94,7 +69,7 @@ def get_person_skills(id=id):
     else:
         return jsonify({'message': 'Value is incorrect!'})
 
-@app.route('/persons/get-rating/<id>')
+@app.route('/persons/get-rating/<id>/')
 def get_rating_from_person(id=id):
     if id_regex.match(id):
         try:
@@ -104,18 +79,7 @@ def get_rating_from_person(id=id):
             r = cursor.fetchone()
             cursor.close()
             if r:
-                el = {
-                    'average_rating': r[7],
-                    'person': {
-                        'id': r[0],
-                        'name': r[1],
-                        'document_number': r[2],
-                        'sex': r[3],
-                        'birth_date': r[4],
-                        'phone': r[5]
-                    }
-                }
-
+                el = PersonHandler.parse_average_rating(r)
                 return jsonify(el)
             else:
                 return jsonify({'message': 'There are no results.'})
@@ -126,8 +90,8 @@ def get_rating_from_person(id=id):
     else:
         return jsonify({'message': 'Value is incorrect!'})
 
-@app.route('/jobs')
-@app.route('/jobs/all')
+@app.route('/jobs/')
+@app.route('/jobs/all/')
 def get_jobs():
     try:
         cursor = conn.cursor()
@@ -138,25 +102,7 @@ def get_jobs():
         if results and len(results) > 0:
             res_json = []
             for r in results:
-                d = {
-                    'id': r[0],
-                    'title': r[1],
-                    'description': r[2],
-                    'vacancies': r[3],
-                    'category': {
-                        'id': r[8],
-                        'title': r[9]
-                    },
-                    'company': {
-                        'id': r[10],
-                        'name': r[12],
-                        'document_number': r[13],
-                        'rating': r[14],
-                        'phone': r[15]
-                    },
-                    'expiration_date': r[6],
-                    'status': r[7]
-                }
+                d = JobHandler.parse_job_info(r)
                 res_json.append(d)
 
             return jsonify(res_json)
