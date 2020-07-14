@@ -1,0 +1,36 @@
+{% extends 'layout-app.html' %}
+
+{% block title %}Agregar empleo{% endblock %}
+
+{% block content %}
+    <form action="{{ url_for('store_job') }}" method="post">
+        <div class="form-group">
+            <input type="text" name="title" id="" placeholder="Título" class="form-control">
+        </div>
+        <div class="form-group">
+            <textarea name="description" rows="2" class="form-control" placeholder="Poner aquí una breve descripción"></textarea>
+        </div>
+        <div class="form-group">
+            <select name="category_id" class="form-control">
+                <option disabled selected>-- Categoría --</option>
+                {% for c in categories %}
+                    <option value="{{ c.id }}">{{ c.name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="form-group">
+            <select name="company_id" class="form-control">
+                <option disabled selected>-- Empresa --</option>
+                {% for e in companies %}
+                    <option value="{{ e.id }}">{{ e.name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="form-group">
+            <input type="number" name="vacancies" min="1" step="1" placeholder="Vacantes" class="form-control">
+        </div>
+        <div class="form-group">
+            <button type="submit">Agregar</button>
+        </div>
+    </form>
+{% endblock %}

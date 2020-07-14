@@ -23,3 +23,16 @@ class JobHandler(object):
             'expiration_date': r[6],
             'status': r[7]
         }
+
+    @classmethod
+    def parse(cls, j):
+        return {
+            'id': j.id,
+            'title': j.title,
+            'description': j.description,
+            'vacancies': j.vacancies,
+            'category_id': j.category_id,
+            'company_id': j.company_id,
+            'expiration_date': j.expiration_date,
+            'status': j.status
+        }

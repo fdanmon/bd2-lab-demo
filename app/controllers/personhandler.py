@@ -15,6 +15,18 @@ class PersonHandler(object):
         }
 
     @classmethod
+    def parse(cls, p):
+        return {
+            'id': p.id,
+            'name': p.name,
+            'document_number': p.document_number,
+            'sex': p.sex,
+            'birth_date': p.birth_date,
+            'phone': p.phone,
+            'rating': p.rating
+        }
+
+    @classmethod
     def parse_skill(cls, r):
         return {
             'id': r[0],
