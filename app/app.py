@@ -3,6 +3,7 @@ from flask import jsonify
 from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
+from sqlalchemy.sql import text
 import re
 
 # Mine
@@ -60,15 +61,12 @@ def get_person(id=id):
 @app.route('/persons/skills/all/')
 def get_all_person_skills():
     try:
-        cursor = conn.cursor()
-        query = ('SELECT * FROM person_skills JOIN persons ON persons.id = person_skills.person_id JOIN skills ON skills.id = person_skills.skill_id JOIN categories ON categories.id = skills.category_id')
-        cursor.execute(query)
-        results = cursor.fetchall()
-        cursor.close()
+        sql = text("SELECT * FROM person_skills JOIN persons ON persons.id = person_skills.person_id JOIN skills ON skills.id = person_skills.skill_id JOIN categories ON categories.id = skills.category_id")
+        results = engine.execute(sql).fetchall()
         if results and len(results) > 0:
             res_json = []
             for r in results:
-                el = PersonHandler.parse_skill(r)
+                el = personhandler.PersonHandler.parse_skill(r)
                 res_json.append(el)
             return jsonify(res_json)
         else:
@@ -82,22 +80,17 @@ def get_all_person_skills():
 def get_person_skills(id=id):
     if id_regex.match(id):
         try:
-            cursor = conn.cursor()
-            query = ('SELECT * FROM person_skills JOIN persons ON persons.id = person_skills.person_id JOIN skills ON skills.id = person_skills.skill_id JOIN categories ON categories.id = skills.category_id WHERE person_skills.person_id = %(id)s')
-            cursor.execute(query, {'id': id})
-            results = cursor.fetchall()
-            cursor.close()
+            sql = text("SELECT * FROM person_skills JOIN persons ON persons.id = person_skills.person_id JOIN skills ON skills.id = person_skills.skill_id JOIN categories ON categories.id = skills.category_id WHERE person_skills.person_id = {}".format(id))
+            results = engine.execute(sql).fetchall()
             if results and len(results) > 0:
                 res_json = []
                 for r in results:
-                    el = PersonHandler.parse_skill(r)
+                    el = personhandler.PersonHandler.parse_skill(r)
                     res_json.append(el)
                 return jsonify(res_json)
             else:
                 return jsonify({'message': 'There are no results.'})
-        except mysql.connector.Error as e:
-            if cursor:
-                cursor.close()
+        except Exception as e:
             return e
     else:
         return jsonify({'message': 'Value is incorrect!'})
@@ -106,39 +99,40 @@ def get_person_skills(id=id):
 def get_rating_from_person(id=id):
     if id_regex.match(id):
         try:
-            cursor = conn.cursor()
-            query = ('SELECT persons.*, FORMAT(AVG(person_skills.rating), 2) FROM person_skills JOIN persons ON persons.id = person_skills.person_id WHERE person_skills.person_id = %(id)s GROUP BY person_skills.person_id')
-            cursor.execute(query, {'id': id})
-            r = cursor.fetchone()
-            cursor.close()
+            sql = text("SELECT persons.*, FORMAT(AVG(person_skills.rating), 2) FROM person_skills JOIN persons ON persons.id = person_skills.person_id WHERE person_skills.person_id = {} GROUP BY person_skills.person_id".format(id))
+            r = engine.execute(sql).fetchone()
             if r:
-                el = PersonHandler.parse_average_rating(r)
+                el = personhandler.PersonHandler.parse_average_rating(r)
                 return jsonify(el)
             else:
                 return jsonify({'message': 'There are no results.'})
-        except mysql.connector.Error as e:
-            if cursor:
-                cursor.close()
-            return e
+        except Exception as e:
+            return jsonify({'error': e})
     else:
         return jsonify({'message': 'Value is incorrect!'})
 
 @app.route('/jobs/top-appliancer/<id>/')
 def get_top_appliancer(id):
-    try:
-        top = session.execute('CALL getTopAppliancer(:id)', {'id': id})
-        if top:
-            print(top)
-            '''
-            return jsonify({
-                'name': top.name,
-                'rating': top.avg_rating
-            })
-            '''
-        else:
-            return jsonify({'message': 'There is no results'})
-    except Exception as e:
-        return jsonify({'error': e})
+    if id_regex.match(id):
+        try:
+            sql = text("CALL getTopAppliancer({})".format(id))
+            rows = engine.execute(sql).fetchall
+            if rows:
+                res = []
+                for r in rows:
+                    n = {
+                        'name': r[0],
+                        'rating': r[1]
+                    }
+                    res.append(n)
+                
+                return jsonify(res)
+            else:
+                return jsonify({'message': 'There is no results'})
+        except Exception as e:
+            return jsonify({'error': e})
+    else:
+        return jsonify({'error': 'ID value is not correct.'})
 
 @app.route('/jobs/')
 @app.route('/jobs/all/')
@@ -194,7 +188,7 @@ def create_job():
     except Exception as e:
         return jsonify({'error': e})
 
-@app.route('/jobs/store', methods=['POST'])
+@app.route('/jobs/store/', methods=['POST'])
 def store_job():
     if request.method == 'POST':
         try:

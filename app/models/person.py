@@ -1,5 +1,7 @@
-from .db import *
 from sqlalchemy import Column, Integer, String, Float, Date
+from sqlalchemy.ext.declarative import declarative_base
+
+Base = declarative_base()
 
 class Person(Base):
 
@@ -15,13 +17,5 @@ class Person(Base):
 
     def __repr__(self):
         return "id: {}\nname: {}\ndocument_number: {}\nsex: {}\nbirth_date: {}\nphone: {}\nrating: {}".format(self.id, self.name, self.document_number, self.sex, self.birth_date, self.phone, self.rating)
-        '''{
-            'id': self.id,
-            'name': self.name,
-            'document_number': self.document_number,
-            'sex': self.sex,
-            'birth_date': self.birth_date,
-            'phone': self.phone,
-            'rating': self.rating
-        }'''
+        
 

@@ -1,1 +1,1 @@
-__all__ = ['category', 'company', 'db', 'job', 'person', 'skill']
+__all__ = ['category', 'company', 'job', 'person', 'skill']
