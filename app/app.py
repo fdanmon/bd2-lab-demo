@@ -23,9 +23,7 @@ session = Session()
 
 @app.route('/')
 def index():
-    return jsonify({
-        'message': 'Hello world!'
-    })
+    return render_template('index.html')
 
 @app.route('/persons/info/')
 @app.route('/persons/info/all/')
@@ -37,7 +35,7 @@ def get_persons():
             for p in persons:
                 new = personhandler.PersonHandler.parse(p)
                 res.append(new)
-            return jsonify(res)
+            return render_template('persons/index.html', persons=res)
         else:
             return jsonify({'message': 'There are no results.'})
     except Exception as e:
@@ -49,7 +47,8 @@ def get_person(id=id):
         try:
             p = session.query(person.Person).filter_by(id=id).first()
             if p:
-                return jsonify(personhandler.PersonHandler.parse(p))
+                pers = personhandler.PersonHandler.parse(p)
+                return render_template('persons/detail.html', p=pers)
             else:
                 return jsonify({'message': 'There are no results.'})
         except Exception as e:
@@ -116,7 +115,7 @@ def get_top_appliancer(id):
     if id_regex.match(id):
         try:
             sql = text("CALL getTopAppliancer({})".format(id))
-            rows = engine.execute(sql).fetchall
+            rows = engine.execute(sql).fetchall()
             if rows:
                 res = []
                 for r in rows:
