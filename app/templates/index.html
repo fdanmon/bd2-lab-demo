@@ -4,7 +4,14 @@
 {% block content %}
 
     <div class="main-content">
-        ¡Bienvenido!
+        <h1>¡Bienvenido!</h1>
+        <h4>¿Qué deseas ver?</h4>
+        <ol>
+            <li><a href="{{ url_for('get_persons') }}">Ver personas registradas</a></li>
+            <li><a href="#">Ver empresas registradas</a></li>
+            <li><a href="{{ url_for('get_jobs') }}">Ver puestos ofertados</a></li>
+            <li><a href="#">Ver habilidades registradas</a></li>
+        </ol>
     </div>
 
 {% endblock %}

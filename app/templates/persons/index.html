@@ -26,7 +26,7 @@
                     <td style="padding: 0 15px;">{{ p.document_number }}</td>
                     <td style="padding: 0 15px;">{{ p.sex }}</td>
                     <td style="padding: 0 15px;">{{ p.phone }}</td>
-                    <td style="padding: 0 10px;"><a href="{{ url_for('get_person', id=p.id) }}" style="color: green">Detalles</a> <a href="#">Habilidades</a></td>
+                    <td style="padding: 0 10px;"><a href="{{ url_for('get_person', id=p.id) }}" style="color: green">Detalles</a> <a href="{{ url_for('get_person_skills', id=p.id) }}">Habilidades</a></td>
                 </tr>
                 {% endfor %}
             </tbody>

@@ -9,11 +9,18 @@
     <title>{% block title %}{% endblock %}</title>
 </head>
 <body>
-    <header class="navbar">
-        <nav>
-            <strong>BASE DE DATOS 2</strong>
+    <div class="header">
+        <div class="logo">
+            <strong><a href="{{ url_for('index') }}" style="color: white;">BASE DE DATOS 2</a></strong>
+        </div>
+        <nav class="navbar">
+            <ul>
+                <li><a href="{{ url_for('get_persons') }}">Personas</a></li>
+                <li><a href="#">Empresas</a></li>
+                <li><a href="{{ url_for('get_jobs') }}">Puestos</a></li>
+            </ul>
         </nav>
-    </header>
+    </div>
     
     <main>
         <div class="container">
@@ -27,6 +34,7 @@
     <script src="{{ url_for('static', filename='js/vendor/jquery-3.5.1.slim.min.js') }}"></script>
     <script src="{{ url_for('static', filename='js/vendor/popper-1.16.0.min.js') }}"></script>
     <script src="{{ url_for('static', filename='js/vendor/bootstrap-4.5.0.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/vendor/sweetalert2.min.js') }}"></script>
     {% block pageScripts %}
     {% endblock %}
 </body>

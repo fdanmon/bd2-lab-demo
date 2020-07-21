@@ -36,3 +36,18 @@ class JobHandler(object):
             'expiration_date': j.expiration_date,
             'status': j.status
         }
+
+    @classmethod
+    def parse_job_appliances(cls, j):
+        return {
+            'person': {
+                'id': j[0],
+                'name': j[1],
+                'rating': j[5]
+            },
+            'job': {
+                'id': j[2],
+                'name': j[3]
+            },
+            'appliance_date': j[4]
+        }

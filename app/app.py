@@ -79,14 +79,22 @@ def get_all_person_skills():
 def get_person_skills(id=id):
     if id_regex.match(id):
         try:
-            sql = text("SELECT * FROM person_skills JOIN persons ON persons.id = person_skills.person_id JOIN skills ON skills.id = person_skills.skill_id JOIN categories ON categories.id = skills.category_id WHERE person_skills.person_id = {}".format(id))
-            results = engine.execute(sql).fetchall()
-            if results and len(results) > 0:
-                res_json = []
-                for r in results:
+            sql = text("SELECT person_skills.person_id, skills.id, skills.title, person_skills.rating, categories.id, categories.name, persons.name FROM person_skills JOIN persons ON persons.id = person_skills.person_id JOIN skills ON skills.id = person_skills.skill_id JOIN categories ON skills.category_id = categories.id WHERE person_skills.person_id = {}".format(id))
+            rows = engine.execute(sql).fetchall()
+            if rows:
+                sks = []
+                for r in rows:
                     el = personhandler.PersonHandler.parse_skill(r)
-                    res_json.append(el)
-                return jsonify(res_json)
+                    sks.append(el)
+                res = {
+                    'person': {
+                        'id': rows[0][0],
+                        'name': rows[0][6]
+                    },
+                    'skills': sks
+                }
+                return render_template('persons/skills.html', person_skills=res)
+                return jsonify(res)
             else:
                 return jsonify({'message': 'There are no results.'})
         except Exception as e:
@@ -143,11 +151,58 @@ def get_jobs():
             for j in jobs:
                 new = jobhandler.JobHandler.parse(j)
                 res.append(new) 
-            return jsonify(res)
+            return render_template('jobs/index.html',jobs=res)
         else:
             return jsonify({'message': 'There are no results.'})
     except Exception as e:
         return jsonify({'error': e})
+
+@app.route('/jobs/appliances/<id>')
+def job_appliances(id):
+    try:
+        if id_regex.match(id):
+            sql = text('SELECT persons.id, persons.name, jobs.id, jobs.title, appliance_date, persons.rating FROM job_appliances JOIN jobs ON job_appliances.job_id = jobs.id JOIN persons ON job_appliances.person_id = persons.id WHERE job_appliances.job_id = {}'.format(id))
+            rows = engine.execute(sql).fetchall()
+            if rows:
+                if len(rows)>0:
+                    apps = []
+                    for r in rows:
+                        new = jobhandler.JobHandler.parse_job_appliances(r)
+                        apps.append(new)
+                    res = {
+                        'job': {
+                            'id': rows[0][2],
+                            'name': rows[0][3],
+                        },
+                        'appliancers': apps
+                    }
+                    #return jsonify(res)
+                    return render_template('jobs/appliances.html', job_appliances=res)
+                else:
+                    res = {
+                        'job': {
+                            'id': rows[0][2],
+                            'name': rows[0][3],
+                        },
+                        'appliancers': []
+                    }
+                    return render_template('jobs/appliances.html', job_appliances=res)
+            else:
+                sql = text('SELECT * FROM jobs  WHERE jobs.id = {}'.format(id))
+                row = engine.execute(sql).fetchone()
+                res = {
+                    'job': {
+                        'id': row[0],
+                        'name': row[1],
+                    },
+                    'appliancers': []
+                }
+                return render_template('jobs/appliances.html', job_appliances=res)
+        else:
+            return jsonify({'message': 'ID value is not correct'})
+    except Exception as e:
+        return jsonify({'error': e})
+
 
 @app.route('/skills/')
 @app.route('/skills/all/')

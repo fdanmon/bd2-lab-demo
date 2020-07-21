@@ -29,23 +29,12 @@ class PersonHandler(object):
     @classmethod
     def parse_skill(cls, r):
         return {
-            'id': r[0],
+            'id': r[1],
+            'title': r[2],
             'rating': r[3],
-            'person': {
+            'category': {
                 'id': r[4],
-                'name': r[5],
-                'document_number': r[6],
-                'sex': r[7],
-                'birth_date': r[8],
-                'phone': r[9]
-            },
-            'skill': {
-                'id': r[11],
-                'title': r[13],
-                'category': {
-                    'id': r[14],
-                    'name': r[15]
-                }
+                'name': r[5]
             }
         }
 

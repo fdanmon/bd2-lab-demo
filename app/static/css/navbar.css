@@ -1,12 +1,47 @@
-.navbar
+.header
 {
     width: 100%;
+    height: 70px;
+    padding: 20px;
     background-color: #39586b;
 }
 
-.navbar>nav
+.header > .logo
 {
-    width: 100%;
-    padding: 5px 10px;
+    height: 100%;
+    width: 20%;
+    float: left;
+}
+
+.header .navbar
+{
+    width: 30%;
+    height: 100%;
     color: #fff;
+    float: right;
+}
+
+.header .navbar > ul
+{
+    list-style: none;
+    padding: 0;
+}
+
+.header .navbar > ul > li
+{
+    display: block;
+    float: left;
+    margin: 0 10px;
+}
+
+.header .navbar > ul > li > a
+{
+    display: block;
+    color:#fff;
+}
+
+.header .navbar > ul > li > a :hover
+{
+    cursor: pointer;
+    text-decoration: none;
 }

@@ -1,0 +1,35 @@
+{% extends 'layout-app.html' %}
+{% block title %}Postulantes por puesto{% endblock %}
+
+{% block pageStyles %}
+{% endblock %}
+
+{% block content %}
+
+    <div class="main-content col-12">
+        <h1>Puesto: {{ job_appliances.job.name }}</h1>
+        <table class="table table-striped table-hover">
+            <thead class="thead-dark">
+                <tr>
+                    <th style="width: 20%; padding: 5 15px;">Postulante</th>
+                    <th style="width: 10%; padding: 5 15px;">Puntaje</th>
+                    <th style="padding: 5 15px;">Fecha de postulación</th>
+                    <th style="width: 20%; padding: 5 15px;">Puesto al que postula</th>
+                    <th style="width: 20%; padding: 5 15px;">Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for j in job_appliances.appliancers %}
+                <tr>
+                    <td style="padding: 0 10px;"><a href="{{ url_for('get_person', id=j.person.id) }}">{{ j.person.name }}</a></td>
+                    <td style="padding: 0 15px;" title="Puntaje global, no según habilidades.">{{ j.person.rating }}</td>
+                    <td style="padding: 0 15px;">{{ j.appliance_date }}</td>
+                    <td style="padding: 0 15px;"><a href="#">{{ j.job.name }}</a></td>
+                    <td style="padding: 0 10px;"><a href="#" style="color: green">Experiencia</a> <a href="{{ url_for('get_person_skills', id=j.person.id) }}">Habilidades</a></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+{% endblock %}
