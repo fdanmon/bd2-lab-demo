@@ -252,6 +252,7 @@ def store_job():
                 vacancies=request.form['vacancies'],
                 category_id=request.form['category_id'],
                 company_id=request.form['company_id'],
+                exp_date=request.form['expiration_date'],
                 status=1
             )
             session.add(new_job)

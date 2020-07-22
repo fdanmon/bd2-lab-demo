@@ -19,11 +19,11 @@ class Job(Base):
     def __repr__(self):
         pass
 
-    def __init__(self, title, description, vacancies, category_id, company_id, status):
+    def __init__(self, title, description, vacancies, category_id, company_id, exp_date, status):
         self.title = title
         self.description = description
         self.vacancies = vacancies
         self.category_id = category_id
         self.company_id = company_id
-        self.expiration_date = '2020-12-31'
+        self.expiration_date = exp_date
         self.status = status

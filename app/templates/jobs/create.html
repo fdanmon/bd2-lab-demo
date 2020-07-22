@@ -3,37 +3,56 @@
 {% block title %}Agregar empleo{% endblock %}
 
 {% block content %}
-    <div class="main-content col-4">
-        <form action="{{ url_for('store_job') }}" method="post">
-            <div class="form-group">
-                <input type="text" name="title" id="" placeholder="Título" class="form-control" required>
+    <div class="main-content col-8">
+        <div class="row">
+            <div class="col-8">
+                <h1>Añadir puesto de trabajo</h1>
             </div>
-            <div class="form-group">
-                <textarea name="description" rows="2" class="form-control" required placeholder="Poner aquí una breve descripción"></textarea>
+        </div>
+        <div class="row">
+            <div class="col-7" style="margin: auto;">
+                <form action="{{ url_for('store_job') }}" method="post">
+                    <div class="form-group">
+                        <label for="">Título(*)</label>
+                        <input type="text" name="title" id="" placeholder="Título" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="">Descripción(*)</label>
+                        <textarea name="description" rows="2" class="form-control" required placeholder="Poner aquí una breve descripción"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="">Categoría(*)</label>
+                        <select name="category_id" class="form-control" required>
+                            <option disabled selected>-- Categoría --</option>
+                            {% for c in categories %}
+                                <option value="{{ c.id }}">{{ c.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="">Compañía(*)</label>
+                        <select name="company_id" class="form-control" required>
+                            <option disabled selected>-- Empresa --</option>
+                            {% for e in companies %}
+                                <option value="{{ e.id }}">{{ e.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="">Vacantes(*)</label>
+                        <input type="number" name="vacancies" min="1" step="1" placeholder="Vacantes" class="form-control" id="vacanciesInput" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="">Fecha de expiración(*)</label>
+                        <input type="date" name="expiration_date" id="" placeholder="Fecha de expiración" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <button type="submit" id="btn_submit" class="btn btn-primary" style="display: block; margin: auto;">Agregar</button>
+                    </div>
+                </form>
             </div>
-            <div class="form-group">
-                <select name="category_id" class="form-control" required>
-                    <option disabled selected>-- Categoría --</option>
-                    {% for c in categories %}
-                        <option value="{{ c.id }}">{{ c.name }}</option>
-                    {% endfor %}
-                </select>
-            </div>
-            <div class="form-group">
-                <select name="company_id" class="form-control" required>
-                    <option disabled selected>-- Empresa --</option>
-                    {% for e in companies %}
-                        <option value="{{ e.id }}">{{ e.name }}</option>
-                    {% endfor %}
-                </select>
-            </div>
-            <div class="form-group">
-                <input type="number" name="vacancies" min="1" step="1" placeholder="Vacantes" class="form-control" id="vacanciesInput" required>
-            </div>
-            <div class="form-group">
-                <button type="submit" id="btn_submit" class="btn btn-primary">Agregar</button>
-            </div>
-        </form>
+        </div>
+        
     </div>
 {% endblock %}
 
